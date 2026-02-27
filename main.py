@@ -1,4 +1,8 @@
-from pieces import Pawn
+from board import Board
 
-pawn = Pawn("BLACK", 1)
-pawn.move("forward")
+# Create and setup board
+board = Board()
+board.setup_board()
+
+print("=== FULL CHESS BOARD ===")
+board.print_board()
