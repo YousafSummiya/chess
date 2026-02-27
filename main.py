@@ -1,21 +1,18 @@
-from pieces import Pawn, Rook, Bishop
+from pieces import Pawn, Rook, Bishop, Queen, King, Knight
 
 if __name__ == "__main__":
-    print("=== Testing Chess Pieces ===\n")
+    print("=== Testing ALL Chess Pieces ===\n")
     
-    # Create and test Pawn
-    black_pawn = Pawn("BLACK", 1)
-    print(f"Created: {black_pawn}")
-    black_pawn.move()
-    print()
+    pieces = [
+        Pawn("BLACK", 1),
+        Rook("WHITE", 1),
+        Bishop("BLACK", 1),
+        Queen("WHITE", 1),
+        King("BLACK", 1),
+        Knight("WHITE", 1)
+    ]
     
-    # Create and test Rook  
-    white_rook = Rook("WHITE", 1)
-    print(f"Created: {white_rook}")
-    white_rook.move()
-    print()
-    
-    # Create and test Bishop
-    black_bishop = Bishop("BLACK", 1)
-    print(f"Created: {black_bishop}")
-    black_bishop.move()
+    for piece in pieces:
+        print(f"Created: {piece}")
+        piece.move()
+        print("-" * 30)
