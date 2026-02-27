@@ -1,19 +1,23 @@
 from board import Board
-from pieces import Pawn
 
 if __name__ == "__main__":
-    print("=== Testing Chess Board Setup ===\n")
+    print("=== Testing REAL Movements ===\n")
     
-    # Create board
     board = Board()
-    
-    # Print initial board state
-    print("Initial board setup (White's perspective - row 8 to row 1):")
+    print("Initial board:")
     board.print_board()
     print("\n" + "="*60 + "\n")
     
-    # Test helper methods
-    print("Testing helper methods:")
-    print(f"Piece at e1: {board.get_piece('e1')}")
-    print(f"Is a4 empty? {board.is_square_empty('a4')}")
-    print(f"Find BLACK Rook 1: {board.find_piece('R', 1, 'BLACK')}")
+    # Test WHITE pawn e7 -> e6
+    white_pawn_e7 = board.get_piece('e7')
+    print("1. WHITE Pawn e7 moves forward:")
+    white_pawn_e7.move()
+    board.print_board()
+    
+    print("\n" + "="*60 + "\n")
+    
+    # Test BLACK pawn e2 -> e3  
+    black_pawn_e2 = board.get_piece('e2')
+    print("2. BLACK Pawn e2 moves forward:")
+    black_pawn_e2.move()
+    board.print_board()

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from movements import BoardMovement
 
 class BaseChessPiece(ABC):
     def __init__(self, color: str, name: str, symbol: str, identifier: int):
@@ -7,8 +8,8 @@ class BaseChessPiece(ABC):
         self.symbol = symbol
         self.identifier = identifier
         self.is_alive = True
-        self.position = None  # Filled later by the board
-        self.board = None     # Filled later by the board class
+        self.position = None
+        self.board = None
 
     def __str__(self):
         return f"{self.color} {self.name} {self.identifier}"
@@ -16,98 +17,99 @@ class BaseChessPiece(ABC):
     def __repr__(self):
         return self.__str__()
 
-    def move(self, movement=None):
-        """Base move implementation - prints the movement."""
-        if movement is None:
-            movement = "Unknown movement"
-        print(f"{movement}")
+    def move(self, new_position: str = None):
+        """Execute movement on the board."""
+        if new_position is None:
+            new_position = self.calculate_movement()
+        
+        if not new_position:
+            print(f"{self} cannot move - blocked or invalid!")
+            return False
+
+        # Check if new location is free or enemy
+        target_piece = self.board.get_piece(new_position)
+        if target_piece:
+            if target_piece.color == self.color:
+                print(f"{self} blocked by friendly piece at {new_position}!")
+                return False
+            else:
+                print(f"{self} kills {target_piece} at {new_position}!")
+                target_piece.die()
+                self.board.squares[new_position] = None
+
+        # Move piece
+        self.board.squares[self.position] = None
+        self.position = new_position
+        self.board.squares[self.position] = self
+        
+        print(f"{self} moved from {self.position[:-2]} to {new_position}")
+        return True
 
     @abstractmethod
-    def calculate_movement(self):
-        """Each piece must implement how it calculates its movement."""
+    def calculate_movement(self) -> str:
+        """Each piece calculates its specific movement."""
         pass
 
     def die(self):
-        """Mark this piece as dead."""
         self.is_alive = False
 
     def set_initial_position(self, position):
-        """Set initial position when piece is placed on board."""
         self.position = position
 
     def define_board(self, board):
-        """Attach a reference to the board."""
         self.board = board
 
-# All chess pieces - Step 3 complete implementation
+# Updated pieces with real movement logic
 class Pawn(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, "Pawn", "-", identifier)
 
-    def calculate_movement(self):
-        return "Pawn moves forward 1 position"
-
-    def move(self, movement=None):
-        if movement is None:
-            movement = self.calculate_movement()
-        super().move(movement)
+    def calculate_movement(self) -> str:
+        return BoardMovement.forward(self.position, self.color, 1)
 
 class Rook(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, "Rook", "R", identifier)
 
-    def calculate_movement(self):
-        return "Rook moves in a straight line"
-
-    def move(self, movement=None):
-        if movement is None:
-            movement = self.calculate_movement()
-        super().move(movement)
+    def calculate_movement(self) -> str:
+        # Simple forward for demo
+        return BoardMovement.forward(self.position, self.color, 1)
 
 class Bishop(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, "Bishop", "B", identifier)
 
-    def calculate_movement(self):
-        return "Bishop moves diagonally"
-
-    def move(self, movement=None):
-        if movement is None:
-            movement = self.calculate_movement()
-        super().move(movement)
+    def calculate_movement(self) -> str:
+        return BoardMovement.forward_left(self.position, self.color, 1)
 
 class Queen(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, "Queen", "Q", identifier)
 
-    def calculate_movement(self):
-        return "Queen moves in all directions"
-
-    def move(self, movement=None):
-        if movement is None:
-            movement = self.calculate_movement()
-        super().move(movement)
+    def calculate_movement(self) -> str:
+        return BoardMovement.forward(self.position, self.color, 1)
 
 class King(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, "King", "K", identifier)
 
-    def calculate_movement(self):
-        return "King moves one square any direction (can kill)"
-
-    def move(self, movement=None):
-        if movement is None:
-            movement = self.calculate_movement()
-        super().move(movement)
+    def calculate_movement(self) -> str:
+        return BoardMovement.forward(self.position, self.color, 1)
 
 class Knight(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, "Knight", "N", identifier)
 
-    def calculate_movement(self):
-        return "Knight moves in L-shape (can jump over pieces)"
-
-    def move(self, movement=None):
-        if movement is None:
-            movement = self.calculate_movement()
-        super().move(movement)
+    def calculate_movement(self) -> str:
+        col_idx = ord(self.position[0]) - ord('a')
+        row = int(self.position[1])
+        
+        # L-shape: 2 forward, 1 left
+        if self.color == "WHITE":
+            new_row = min(row + 2, 8)
+        else:
+            new_row = max(row - 2, 1)
+        new_col_idx = max(col_idx - 1, 0)
+        new_col = chr(ord('a') + new_col_idx)
+        
+        return f"{new_col}{new_row}"
