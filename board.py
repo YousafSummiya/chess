@@ -1,4 +1,5 @@
 from pieces import Pawn, Rook, Bishop, Queen, King, Knight
+import json
 
 class Board:
     def __init__(self):
@@ -12,9 +13,7 @@ class Board:
 
     def setup_board(self):
         """Place all pieces in starting positions."""
-        
         # Black pieces (row 1 & 2)
-        # Row 1: Rooks, Knights, Bishops, Queen, King, Bishops, Knights, Rooks
         self.squares['a1'] = Rook('BLACK', 1)
         self.squares['b1'] = Knight('BLACK', 1)
         self.squares['c1'] = Bishop('BLACK', 1)
@@ -31,9 +30,7 @@ class Board:
         }
         self.squares.update(black_pawns)
         
-        # Empty rows 3-6 (already None from init)
-        
-        # White pawns (row 7) - Dict comprehension!
+        # White pawns (row 7)
         white_pawns = {
             f"{chr(col)}7": Pawn('WHITE', i+1) 
             for col, i in zip(range(ord('a'), ord('i')), range(8))
@@ -58,9 +55,9 @@ class Board:
 
     def print_board(self):
         """Print board in row-first format (8 to 1, white's perspective)."""
-        for row in range(8, 0, -1):  # Print row 8 first (white), then 7, ..., 1
+        for row in range(8, 0, -1):
             row_pieces = [
-                str(self.squares.get(f"{col}{row}", None)) 
+                str(self.squares.get(f"{chr(col)}{row}", None)) 
                 for col in range(ord('a'), ord('i'))
             ]
             print(row_pieces)
@@ -89,3 +86,32 @@ class Board:
         if piece:
             piece.die()
             self.squares[square] = None
+
+    @staticmethod
+    def load_board_states_generator(filename='board.txt'):
+        """
+        Generator: Yield one board state at a time from file (memory efficient).
+        """
+        try:
+            with open(filename, 'r') as file:
+                for line_num, line in enumerate(file, 1):
+                    try:
+                        state = json.loads(line.strip())
+                        yield line_num, state
+                    except json.JSONDecodeError:
+                        print(f"Skipping invalid JSON at line {line_num}")
+                        continue
+        except FileNotFoundError:
+            print(f"File {filename} not found")
+            
+    @staticmethod
+    def print_state_from_generator(state_dict):
+        """
+        Print a single board state in the same format as print_board().
+        """
+        for row in range(8, 0, -1):
+            row_pieces = [
+                str(state_dict.get(f"{chr(col)}{row}", None)) 
+                for col in range(ord('a'), ord('i'))
+            ]
+            print(row_pieces)
