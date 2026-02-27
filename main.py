@@ -1,9 +1,8 @@
 from pieces import Pawn
 
-# Test inheritance
+# Test inheritance - exactly as assignment specifies
 pawn = Pawn("BLACK", 1)
-print(pawn)  # Output: BLACK Pawn 1
-pawn.move("forward")  # Output: Pawn moves forward 1 position
-print(pawn.is_alive)  # Output: True
-pawn.die()
-print(pawn.is_alive)  # Output: False
+print(pawn)  # Should output: BLACK Pawn 1
+pawn.move("forward")  # Should output: Pawn moves forward 1 position
+print(f"Pawn position: {pawn.position}")  # None
+print(f"Pawn alive: {pawn.is_alive}")  # True
