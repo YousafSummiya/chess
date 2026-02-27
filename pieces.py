@@ -1,4 +1,6 @@
 from abc import ABC
+import functools
+import json
 
 class BaseChessPiece(ABC):
     def __init__(self, color: str, identifier: int):
@@ -10,8 +12,32 @@ class BaseChessPiece(ABC):
         self.is_alive = True
         self.board = None
 
+    def print_board_decorator(func):
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            func(self, *args, **kwargs)
+            self.board.print_board()
+        return wrapper
+
+    def save_board_decorator(func):
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            func(self, *args, **kwargs)
+            with open('board.txt', 'a') as f:
+                f.write(json.dumps({k: str(v) for k, v in self.board.squares.items()}) + '\n')
+        return wrapper
+
+    @print_board_decorator
     def move(self, movement: str):
-        print(movement)
+        """Move piece to new position"""
+        new_location = self.board.get_piece(movement)
+        
+        if new_location and new_location.color != self.color:
+            self.board.kill_piece(movement)
+        
+        self.board.squares[self.position] = None
+        self.position = movement
+        self.board.squares[self.position] = self
 
     def die(self):
         self.is_alive = False
