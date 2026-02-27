@@ -31,7 +31,7 @@ class BaseChessPiece(ABC):
     def __repr__(self):
         return str(self)
 
-
+# ✅ ONLY ONE of each class
 class Pawn(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, identifier)
@@ -41,7 +41,6 @@ class Pawn(BaseChessPiece):
     def move(self, movement: str):
         print("Pawn moves forward 1 position")
         super().move(movement)
-
 
 class Rook(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
@@ -53,7 +52,6 @@ class Rook(BaseChessPiece):
         print("Rook moves in a straight line")
         super().move(movement)
 
-
 class Bishop(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, identifier)
@@ -63,7 +61,6 @@ class Bishop(BaseChessPiece):
     def move(self, movement: str):
         print("Bishop moves diagonally")
         super().move(movement)
-
 
 class Knight(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
@@ -75,7 +72,6 @@ class Knight(BaseChessPiece):
         print("Knight moves in an L shape")
         super().move(movement)
 
-
 class King(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, identifier)
@@ -85,7 +81,6 @@ class King(BaseChessPiece):
     def move(self, movement: str):
         print("King moves one position any direction")
         super().move(movement)
-
 
 class Queen(BaseChessPiece):
     def __init__(self, color: str, identifier: int):

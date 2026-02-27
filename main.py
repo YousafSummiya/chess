@@ -1,8 +1,18 @@
-from pieces import Pawn
+from pieces import Pawn, Rook, Bishop, Knight, King, Queen
 
-# Test inheritance - exactly as assignment specifies
-pawn = Pawn("BLACK", 1)
-print(pawn)  # Should output: BLACK Pawn 1
-pawn.move("forward")  # Should output: Pawn moves forward 1 position
-print(f"Pawn position: {pawn.position}")  # None
-print(f"Pawn alive: {pawn.is_alive}")  # True
+print("=== Testing Inheritance ===\n")
+
+# Test each piece
+pieces = [
+    Pawn("BLACK", 1),
+    Rook("WHITE", 1),
+    Bishop("BLACK", 1),
+    Knight("WHITE", 1),
+    King("BLACK", 1),
+    Queen("WHITE", 1)
+]
+
+for piece in pieces:
+    print(piece)
+    piece.move("test")
+    print()
