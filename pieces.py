@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 class BaseChessPiece(ABC):
     def __init__(self, color: str, identifier: int):
@@ -10,17 +10,21 @@ class BaseChessPiece(ABC):
         self.is_alive = True
         self.board = None
 
-    # ✅ ONLY ONE move() method - implements abstractmethod logic
     def move(self, movement: str):
         print(movement)
 
     def die(self):
         self.is_alive = False
 
+    def set_initial_position(self, position: str):
+        self.position = position
+
+    def define_board(self, board):
+        self.board = board
+
     def __str__(self):
         return f"{self.color} {self.name} {self.identifier}"
 
-# ✅ Now pieces DEFINE movement string and call super()
 class Pawn(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, identifier)
@@ -28,8 +32,8 @@ class Pawn(BaseChessPiece):
         self.symbol = "-"
 
     def move(self, movement: str):
-        movement = "Pawn moves forward 1 position"  # ✅ Define movement
-        super().move(movement)  # ✅ Parent prints it!
+        movement = "Pawn moves forward 1 position"
+        super().move(movement)
 
 class Rook(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
@@ -40,8 +44,6 @@ class Rook(BaseChessPiece):
     def move(self, movement: str):
         movement = "Rook moves in a straight line"
         super().move(movement)
-
-# ADD THESE MISSING CLASSES after Queen class:
 
 class Bishop(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
@@ -72,6 +74,7 @@ class King(BaseChessPiece):
     def move(self, movement: str):
         movement = "King moves one position any direction"
         super().move(movement)
+
 class Queen(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, identifier)
@@ -81,4 +84,3 @@ class Queen(BaseChessPiece):
     def move(self, movement: str):
         movement = "Queen moves any direction"
         super().move(movement)
-
