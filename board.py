@@ -17,6 +17,9 @@ class Board:
             if piece is not None:
                 piece.set_initial_position(square)
                 piece.define_board(self)
+    def save_state_after_move(self):
+          """Auto-save after every move"""
+          self.save_state()
 
     def setup_board(self):
         """Standard chess starting position"""
