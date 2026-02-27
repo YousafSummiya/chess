@@ -1,5 +1,40 @@
 from abc import ABC, abstractmethod
+from functools import wraps
 from movements import BoardMovement
+
+def print_board(func):
+    """Decorator: Print board before and after move."""
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        print(f"\n--- {self} MOVING from {self.position} ---")
+        self.board.print_board()
+        print()
+        
+        result = func(self, *args, **kwargs)
+        
+        print(f"--- AFTER {self} MOVE ---")
+        self.board.print_board()
+        print("-" * 50)
+        return result
+    return wrapper
+
+def save_board(func):
+    """Decorator: Save board state to board.txt after move."""
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        result = func(self, *args, **kwargs)
+        
+        # Save board state to file
+        import json
+        try:
+            with open('board.txt', 'a') as file:
+                state = {k: str(v) if v else None for k, v in self.board.squares.items()}
+                file.write(json.dumps(state) + '\n')
+            print(f"💾 Board state saved (total lines: {sum(1 for _ in open('board.txt'))})")
+        except Exception as e:
+            print(f"Save failed: {e}")
+        return result
+    return wrapper
 
 class BaseChessPiece(ABC):
     def __init__(self, color: str, name: str, symbol: str, identifier: int):
@@ -17,8 +52,10 @@ class BaseChessPiece(ABC):
     def __repr__(self):
         return self.__str__()
 
+    @print_board
+    @save_board
     def move(self, new_position: str = None):
-        """Execute movement on the board."""
+        """Execute movement on the board with decorators."""
         if new_position is None:
             new_position = self.calculate_movement()
         
@@ -37,17 +74,16 @@ class BaseChessPiece(ABC):
                 target_piece.die()
                 self.board.squares[new_position] = None
 
-        # Move piece
+        # Execute move
         self.board.squares[self.position] = None
         self.position = new_position
         self.board.squares[self.position] = self
         
-        print(f"{self} moved from {self.position[:-2]} to {new_position}")
+        print(f"✅ {self} successfully moved to {new_position}")
         return True
 
     @abstractmethod
     def calculate_movement(self) -> str:
-        """Each piece calculates its specific movement."""
         pass
 
     def die(self):
@@ -59,7 +95,7 @@ class BaseChessPiece(ABC):
     def define_board(self, board):
         self.board = board
 
-# Updated pieces with real movement logic
+# Piece implementations (unchanged from Step 5)
 class Pawn(BaseChessPiece):
     def __init__(self, color: str, identifier: int):
         super().__init__(color, "Pawn", "-", identifier)
@@ -72,7 +108,6 @@ class Rook(BaseChessPiece):
         super().__init__(color, "Rook", "R", identifier)
 
     def calculate_movement(self) -> str:
-        # Simple forward for demo
         return BoardMovement.forward(self.position, self.color, 1)
 
 class Bishop(BaseChessPiece):
@@ -104,7 +139,6 @@ class Knight(BaseChessPiece):
         col_idx = ord(self.position[0]) - ord('a')
         row = int(self.position[1])
         
-        # L-shape: 2 forward, 1 left
         if self.color == "WHITE":
             new_row = min(row + 2, 8)
         else:
