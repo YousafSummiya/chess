@@ -1,18 +1,19 @@
-from pieces import Pawn, Rook, Bishop, Queen, King, Knight
+from board import Board
+from pieces import Pawn
 
 if __name__ == "__main__":
-    print("=== Testing ALL Chess Pieces ===\n")
+    print("=== Testing Chess Board Setup ===\n")
     
-    pieces = [
-        Pawn("BLACK", 1),
-        Rook("WHITE", 1),
-        Bishop("BLACK", 1),
-        Queen("WHITE", 1),
-        King("BLACK", 1),
-        Knight("WHITE", 1)
-    ]
+    # Create board
+    board = Board()
     
-    for piece in pieces:
-        print(f"Created: {piece}")
-        piece.move()
-        print("-" * 30)
+    # Print initial board state
+    print("Initial board setup (White's perspective - row 8 to row 1):")
+    board.print_board()
+    print("\n" + "="*60 + "\n")
+    
+    # Test helper methods
+    print("Testing helper methods:")
+    print(f"Piece at e1: {board.get_piece('e1')}")
+    print(f"Is a4 empty? {board.is_square_empty('a4')}")
+    print(f"Find BLACK Rook 1: {board.find_piece('R', 1, 'BLACK')}")
