@@ -32,3 +32,28 @@ class BaseChessPiece(ABC):
     def define_board(self, board):
         """Attach a reference to the board."""
         self.board = board
+
+# Step 2: Implement specific chess pieces
+class Pawn(BaseChessPiece):
+    def __init__(self, color: str, identifier: int):
+        super().__init__(color, "Pawn", "-", identifier)
+
+    def move(self, movement=None):
+        movement = "Pawn moves forward 1 position"
+        super().move(movement)  # This will be implemented later
+
+class Rook(BaseChessPiece):
+    def __init__(self, color: str, identifier: int):
+        super().__init__(color, "Rook", "R", identifier)
+
+    def move(self, movement=None):
+        movement = "Rook moves in a straight line"
+        super().move(movement)
+
+class Bishop(BaseChessPiece):
+    def __init__(self, color: str, identifier: int):
+        super().__init__(color, "Bishop", "B", identifier)
+
+    def move(self, movement=None):
+        movement = "Bishop moves diagonally"
+        super().move(movement)
